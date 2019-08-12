@@ -5,9 +5,8 @@ import (
 	"os"
 	"testing"
 
-	"waha.api/models"
-
-	"waha.api/pkg"
+	"github.com/kutogroup/kuto.api/models"
+	"github.com/kutogroup/kuto.api/pkg"
 )
 
 var db = pkg.NewDatabase("kuto", "localhost:3306", "root", "root")

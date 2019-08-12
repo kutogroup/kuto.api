@@ -4,12 +4,13 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
-	"kuto/models"
-	"kuto/utils"
 	"log"
 	"net/url"
 	"reflect"
 	"time"
+
+	"github.com/kutogroup/kuto.api/models"
+	"github.com/kutogroup/kuto.api/utils"
 
 	"github.com/go-gorp/gorp"
 	_ "github.com/go-sql-driver/mysql"
