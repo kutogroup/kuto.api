@@ -7,7 +7,7 @@ import (
 	"os"
 	"strings"
 
-	"kuto/utils"
+	"github.com/kutogroup/kuto.api/utils"
 
 	_ "github.com/go-sql-driver/mysql"
 )
@@ -37,6 +37,7 @@ func main() {
 	flag.StringVar(&host, "h", "localhost", "mysql host")
 	flag.StringVar(&table, "t", "kuto", "mysql table")
 	flag.StringVar(&dest, "d", ".", "gen folder")
+	flag.PrintDefaults()
 	flag.Parse()
 
 	fmt.Println("user=", user, "pwd=", pwd, "host=", host, "table=", table, "dest=", dest)
@@ -60,7 +61,7 @@ func main() {
 		structName := utils.ConvertLine2Camel(table)
 		structString := "package models\n\n"
 		structString = structString + "import (\n"
-		structString = structString + getSpace(4) + "m \"kuto/models\"\n"
+		structString = structString + getSpace(4) + "m \"github.com/kutogroup/kuto.api/models\"\n"
 		structString = structString + ")\n\n"
 
 		//生成数据库常量

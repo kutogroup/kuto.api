@@ -40,6 +40,8 @@ func NewCache(address string, poolSize int, timeout time.Duration) *WahaCache {
 //Get 获取缓存对象
 func (c *WahaCache) Get(key string) (string, error) {
 	conn := c.pool.Get()
+	defer conn.Close()
+
 	conn.Send("GET", key)
 	conn.Flush()
 	v, err := conn.Receive()
@@ -53,6 +55,8 @@ func (c *WahaCache) Get(key string) (string, error) {
 //Set 设置缓存对象
 func (c *WahaCache) Set(key string, value string) error {
 	conn := c.pool.Get()
+	defer conn.Close()
+
 	conn.Send("SET", key, value)
 	conn.Flush()
 	_, err := conn.Receive()
@@ -62,6 +66,8 @@ func (c *WahaCache) Set(key string, value string) error {
 //SetByEx 设置缓存对象
 func (c *WahaCache) SetByEx(key string, value string, expired int) error {
 	conn := c.pool.Get()
+	defer conn.Close()
+
 	conn.Send("SET", key, value, "EX", expired)
 	conn.Flush()
 	_, err := conn.Receive()
@@ -77,7 +83,20 @@ func (c *WahaCache) Exists(key string) bool {
 //Del 删除缓存
 func (c *WahaCache) Del(key string) error {
 	conn := c.pool.Get()
+	defer conn.Close()
+
 	conn.Send("DEL", key)
+	conn.Flush()
+	_, err := conn.Receive()
+	return err
+}
+
+//Clear 清空所有缓存
+func (c *WahaCache) Clear() error {
+	conn := c.pool.Get()
+	defer conn.Close()
+
+	conn.Send("FLUSHALL")
 	conn.Flush()
 	_, err := conn.Receive()
 	return err
