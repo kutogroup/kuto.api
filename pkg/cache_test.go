@@ -4,7 +4,7 @@ import (
 	"testing"
 	"time"
 
-	"waha.api/pkg"
+	"github.com/kutogroup/kuto.api/pkg"
 )
 
 var cache = pkg.NewCache(":6379", 5, 300*time.Second)

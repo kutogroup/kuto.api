@@ -5,7 +5,7 @@ import (
 	"testing"
 	"time"
 
-	"waha.api/pkg"
+	"github.com/kutogroup/kuto.api/pkg"
 )
 
 var cdn = pkg.NewCDN("cdn.kutoapps.com", "1SYOD1M9RIAS97U1X1RZ", "anBa2vd6jZtIgNZ0QNJaYAMKvhE3Lp7gQRQLFt3H", time.Minute)
