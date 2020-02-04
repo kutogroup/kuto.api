@@ -6,14 +6,14 @@ import (
 	"github.com/gomodule/redigo/redis"
 )
 
-//WahaCache 缓存结构体
-type WahaCache struct {
+//KutoCache 缓存结构体
+type KutoCache struct {
 	pool *redis.Pool
 }
 
 //NewCache 新建缓存对象
-func NewCache(address string, poolSize int, timeout time.Duration) *WahaCache {
-	return &WahaCache{
+func NewCache(address string, poolSize int, timeout time.Duration) *KutoCache {
+	return &KutoCache{
 		pool: &redis.Pool{
 			MaxIdle: poolSize,
 			// MaxActive:   5,
@@ -38,7 +38,7 @@ func NewCache(address string, poolSize int, timeout time.Duration) *WahaCache {
 }
 
 //Get 获取缓存对象
-func (c *WahaCache) Get(key string) (string, error) {
+func (c *KutoCache) Get(key string) (string, error) {
 	conn := c.pool.Get()
 	defer conn.Close()
 
@@ -53,7 +53,7 @@ func (c *WahaCache) Get(key string) (string, error) {
 }
 
 //Set 设置缓存对象
-func (c *WahaCache) Set(key string, value string) error {
+func (c *KutoCache) Set(key string, value string) error {
 	conn := c.pool.Get()
 	defer conn.Close()
 
@@ -64,7 +64,7 @@ func (c *WahaCache) Set(key string, value string) error {
 }
 
 //SetByEx 设置缓存对象
-func (c *WahaCache) SetByEx(key string, value string, expired int) error {
+func (c *KutoCache) SetByEx(key string, value string, expired int) error {
 	conn := c.pool.Get()
 	defer conn.Close()
 
@@ -75,13 +75,13 @@ func (c *WahaCache) SetByEx(key string, value string, expired int) error {
 }
 
 //Exists 判断缓存是否存在
-func (c *WahaCache) Exists(key string) bool {
+func (c *KutoCache) Exists(key string) bool {
 	exists, _ := redis.Bool(c.pool.Get().Do("EXISTS", key))
 	return exists
 }
 
 //Del 删除缓存
-func (c *WahaCache) Del(key string) error {
+func (c *KutoCache) Del(key string) error {
 	conn := c.pool.Get()
 	defer conn.Close()
 
@@ -92,7 +92,7 @@ func (c *WahaCache) Del(key string) error {
 }
 
 //Clear 清空所有缓存
-func (c *WahaCache) Clear() error {
+func (c *KutoCache) Clear() error {
 	conn := c.pool.Get()
 	defer conn.Close()
 

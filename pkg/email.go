@@ -2,8 +2,8 @@ package pkg
 
 import gomail "gopkg.in/gomail.v2"
 
-//WahaEmail 发送电子邮件
-type WahaEmail struct {
+//KutoEmail 发送电子邮件
+type KutoEmail struct {
 	UserName string
 	PassWord string
 	Host     string
@@ -12,8 +12,8 @@ type WahaEmail struct {
 }
 
 //NewEmail 新建email对象
-func NewEmail(name string, pwd string, host string, port int, isHTML bool) *WahaEmail {
-	return &WahaEmail{
+func NewEmail(name string, pwd string, host string, port int, isHTML bool) *KutoEmail {
+	return &KutoEmail{
 		UserName: name,
 		PassWord: pwd,
 		Host:     host,
@@ -23,7 +23,7 @@ func NewEmail(name string, pwd string, host string, port int, isHTML bool) *Waha
 }
 
 //Send 发送电子邮件
-func (email *WahaEmail) Send(to string, title string, body string) error {
+func (email *KutoEmail) Send(to string, title string, body string) error {
 	m := gomail.NewMessage()
 	m.SetHeader("From", email.UserName)
 	m.SetHeader("To", to)

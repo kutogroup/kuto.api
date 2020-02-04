@@ -21,18 +21,18 @@ var defaultExcludedUpdateColumns = []string{
 	"id", "create_at", "update_at",
 }
 
-//WahaDB 数据库结构体
-type WahaDB struct {
+//KutoDB 数据库结构体
+type KutoDB struct {
 	dbmap *gorp.DbMap
 }
 
-//WahaTx 数据库事务体
-type WahaTx struct {
+//KutoTx 数据库事务体
+type KutoTx struct {
 	dbtx *gorp.Transaction
 }
 
 //NewDatabase 新建数据库对象
-func NewDatabase(table, addr, user, pwd string) *WahaDB {
+func NewDatabase(table, addr, user, pwd string) *KutoDB {
 	sqlStr := fmt.Sprintf("%s:%s@tcp(%s)/%s?charset=utf8&parseTime=True&loc=%s", user, pwd, addr, table, timeZone)
 	fmt.Println("database conn string is", sqlStr)
 	db, err := sql.Open("mysql", sqlStr)
@@ -41,7 +41,7 @@ func NewDatabase(table, addr, user, pwd string) *WahaDB {
 		return nil
 	}
 
-	database := &WahaDB{
+	database := &KutoDB{
 		dbmap: &gorp.DbMap{
 			Db: db,
 			Dialect: gorp.MySQLDialect{
@@ -58,14 +58,14 @@ func NewDatabase(table, addr, user, pwd string) *WahaDB {
 }
 
 //SelectByID 根据ID查询
-func (db *WahaDB) SelectByID(holder interface{}, id int64) error {
+func (db *KutoDB) SelectByID(holder interface{}, id int64) error {
 	return db.dbmap.SelectOne(holder,
 		fmt.Sprintf("SELECT * FROM %s WHERE deleted=0 AND (%s)", utils.StructGetLineName(holder), "id=?"),
 		id)
 }
 
 //Select 根据条件查询
-func (db *WahaDB) Select(holder interface{}, where string, args ...interface{}) error {
+func (db *KutoDB) Select(holder interface{}, where string, args ...interface{}) error {
 	v, t := utils.ReflectGetVT(holder)
 
 	if t.Kind() != reflect.Slice {
@@ -87,7 +87,7 @@ func (db *WahaDB) Select(holder interface{}, where string, args ...interface{}) 
 }
 
 //Insert 插入数据库
-func (db *WahaDB) Insert(holder ...interface{}) error {
+func (db *KutoDB) Insert(holder ...interface{}) error {
 	for _, v := range holder {
 		t := &models.Time{}
 		t.Scan(time.Now())
@@ -99,7 +99,7 @@ func (db *WahaDB) Insert(holder ...interface{}) error {
 }
 
 //Update 更新数据库
-func (db *WahaDB) Update(holder interface{}, filterColumns ...string) error {
+func (db *KutoDB) Update(holder interface{}, filterColumns ...string) error {
 	_, err := db.dbmap.UpdateColumns(func(m *gorp.ColumnMap) bool {
 		for _, c := range defaultExcludedUpdateColumns {
 			if c == m.ColumnName {
@@ -119,45 +119,45 @@ func (db *WahaDB) Update(holder interface{}, filterColumns ...string) error {
 }
 
 //Delete 删除数据(这里仅仅只修改数据库deleted字段)
-func (db *WahaDB) Delete(holder interface{}) error {
+func (db *KutoDB) Delete(holder interface{}) error {
 	utils.ReflectSetValue(holder, "Deleted", int64(1))
 	return db.Update(holder, "deleted")
 }
 
 //Exec 执行sql语句
-func (db *WahaDB) Exec(sql string, args ...interface{}) error {
+func (db *KutoDB) Exec(sql string, args ...interface{}) error {
 	_, err := db.dbmap.Exec(sql, args)
 	return err
 }
 
 //Begin 开启事务
-func (db *WahaDB) Begin() *WahaTx {
+func (db *KutoDB) Begin() *KutoTx {
 	tx, err := db.dbmap.Begin()
 	fmt.Println(err)
-	return &WahaTx{
+	return &KutoTx{
 		dbtx: tx,
 	}
 }
 
 //Commit 提交事务
-func (tx *WahaTx) Commit() error {
+func (tx *KutoTx) Commit() error {
 	return tx.dbtx.Commit()
 }
 
 //Rollback 回滚事务
-func (tx *WahaTx) Rollback() error {
+func (tx *KutoTx) Rollback() error {
 	return tx.dbtx.Rollback()
 }
 
 //SelectByID 根据ID查询
-func (tx *WahaTx) SelectByID(holder interface{}, id int) error {
+func (tx *KutoTx) SelectByID(holder interface{}, id int) error {
 	return tx.dbtx.SelectOne(holder,
 		fmt.Sprintf("SELECT * FROM %s WHERE deleted=0 AND (%s)", utils.StructGetLineName(holder), "id=?"),
 		id)
 }
 
 //Select 根据条件查询
-func (tx *WahaTx) Select(holder interface{}, where string, args ...interface{}) error {
+func (tx *KutoTx) Select(holder interface{}, where string, args ...interface{}) error {
 	v, t := utils.ReflectGetVT(holder)
 
 	if t.Kind() != reflect.Slice {
@@ -179,7 +179,7 @@ func (tx *WahaTx) Select(holder interface{}, where string, args ...interface{}) 
 }
 
 //Insert 插入数据库
-func (tx *WahaTx) Insert(holder ...interface{}) error {
+func (tx *KutoTx) Insert(holder ...interface{}) error {
 	for _, v := range holder {
 		t := &models.Time{}
 		t.Scan(time.Now())
@@ -191,7 +191,7 @@ func (tx *WahaTx) Insert(holder ...interface{}) error {
 }
 
 //Update 更新数据库
-func (tx *WahaTx) Update(holder interface{}, filterColumns ...string) error {
+func (tx *KutoTx) Update(holder interface{}, filterColumns ...string) error {
 	_, err := tx.dbtx.UpdateColumns(func(m *gorp.ColumnMap) bool {
 		for _, c := range defaultExcludedUpdateColumns {
 			if c == m.ColumnName {
@@ -211,13 +211,13 @@ func (tx *WahaTx) Update(holder interface{}, filterColumns ...string) error {
 }
 
 //Delete 删除数据(这里仅仅只修改数据库deleted字段)
-func (tx *WahaTx) Delete(holder interface{}) error {
+func (tx *KutoTx) Delete(holder interface{}) error {
 	utils.ReflectSetValue(holder, "Deleted", 1)
 	return tx.Update(holder, "deleted")
 }
 
 //Exec 执行sql语句
-func (tx *WahaTx) Exec(sql string, args ...interface{}) error {
+func (tx *KutoTx) Exec(sql string, args ...interface{}) error {
 	_, err := tx.dbtx.Exec(sql, args)
 	return err
 }
