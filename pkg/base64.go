@@ -3,7 +3,7 @@ package pkg
 import "encoding/base64"
 
 const (
-	defaultTable = "vE2GNUsDWJIOY4c1wuQprPnqfK_zdCLiFH9texZ5/7SkM8yBmohXAg3RTljaV60b"
+	defaultTable = "vE2GNUsDWJIOY4c1wuQprPnqfK_zdCLiFH9texZ5-7SkM8yBmohXAg3RTljaV60b"
 )
 
 //KutoBase64 自定义base64
