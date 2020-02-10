@@ -33,9 +33,3 @@ func StructGetFields(model interface{}, tag string) (cols []StructField) {
 
 	return
 }
-
-func StructGetFieldValue(model interface{}, name String) interface{} {
-	//t, v := ReflectGetVT(model)
-
-	return nil
-}
