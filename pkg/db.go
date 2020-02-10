@@ -18,9 +18,6 @@ import (
 )
 
 var timeZone = url.QueryEscape("Asia/Shanghai")
-var defaultExcludedUpdateColumns = []string{
-	"id", "create_at", "update_at",
-}
 
 //KutoDB 数据库结构体
 type KutoDB struct {
@@ -101,22 +98,8 @@ func (db *KutoDB) Insert(holder ...interface{}) error {
 }
 
 //Update 更新数据库
-func (db *KutoDB) Update(holder interface{}, filterColumns ...string) (int64, error) {
-	return db.dbmap.UpdateColumns(func(m *gorp.ColumnMap) bool {
-		for _, c := range defaultExcludedUpdateColumns {
-			if c == m.ColumnName {
-				return false
-			}
-		}
-
-		for _, c := range filterColumns {
-			if c == m.ColumnName {
-				return true
-			}
-		}
-
-		return false
-	}, holder)
+func (db *KutoDB) Update(holder interface{}) (int64, error) {
+	return db.dbmap.Update(holder)
 }
 
 //Delete 删除数据(这里仅仅只修改数据库deleted字段)
@@ -192,23 +175,8 @@ func (tx *KutoTx) Insert(holder ...interface{}) error {
 }
 
 //Update 更新数据库
-func (tx *KutoTx) Update(holder interface{}, filterColumns ...string) error {
-	_, err := tx.dbtx.UpdateColumns(func(m *gorp.ColumnMap) bool {
-		for _, c := range defaultExcludedUpdateColumns {
-			if c == m.ColumnName {
-				return false
-			}
-		}
-
-		for _, c := range filterColumns {
-			if c == m.ColumnName {
-				return true
-			}
-		}
-
-		return false
-	}, holder)
-	return err
+func (tx *KutoTx) Update(holder interface{}) int64, error {
+	return tx.dbtx.Update(holder)
 }
 
 //Delete 删除数据(这里仅仅只修改数据库deleted字段)
