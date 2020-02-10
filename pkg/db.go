@@ -105,7 +105,7 @@ func (db *KutoDB) Update(holder interface{}) (int64, error) {
 //Delete 删除数据(这里仅仅只修改数据库deleted字段)
 func (db *KutoDB) Delete(holder interface{}) (int64, error) {
 	utils.ReflectSetValue(holder, "Deleted", int64(1))
-	return db.Update(holder, "deleted")
+	return db.Update(holder)
 }
 
 //Exec 执行sql语句
@@ -175,14 +175,14 @@ func (tx *KutoTx) Insert(holder ...interface{}) error {
 }
 
 //Update 更新数据库
-func (tx *KutoTx) Update(holder interface{}) int64, error {
+func (tx *KutoTx) Update(holder interface{}) (int64, error) {
 	return tx.dbtx.Update(holder)
 }
 
 //Delete 删除数据(这里仅仅只修改数据库deleted字段)
-func (tx *KutoTx) Delete(holder interface{}) error {
+func (tx *KutoTx) Delete(holder interface{}) (int64, error) {
 	utils.ReflectSetValue(holder, "Deleted", 1)
-	return tx.Update(holder, "deleted")
+	return tx.Update(holder)
 }
 
 //Exec 执行sql语句
