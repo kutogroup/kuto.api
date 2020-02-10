@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"log"
 	"net/url"
+	"os"
 	"reflect"
 	"time"
 
@@ -50,6 +51,7 @@ func NewDatabase(table, addr, user, pwd string) *KutoDB {
 		},
 	}
 
+	database.dbmap.TraceOn("[gorp]", log.New(os.Stdout, "kk:", log.Lmicroseconds))
 	for _, v := range models.ModelTables {
 		database.dbmap.AddTableWithName(v, utils.StructGetLineName(v)).SetKeys(true, "ID")
 	}
@@ -99,8 +101,8 @@ func (db *KutoDB) Insert(holder ...interface{}) error {
 }
 
 //Update 更新数据库
-func (db *KutoDB) Update(holder interface{}, filterColumns ...string) error {
-	_, err := db.dbmap.UpdateColumns(func(m *gorp.ColumnMap) bool {
+func (db *KutoDB) Update(holder interface{}, filterColumns ...string) (int64, error) {
+	return db.dbmap.UpdateColumns(func(m *gorp.ColumnMap) bool {
 		for _, c := range defaultExcludedUpdateColumns {
 			if c == m.ColumnName {
 				return false
@@ -115,11 +117,10 @@ func (db *KutoDB) Update(holder interface{}, filterColumns ...string) error {
 
 		return false
 	}, holder)
-	return err
 }
 
 //Delete 删除数据(这里仅仅只修改数据库deleted字段)
-func (db *KutoDB) Delete(holder interface{}) error {
+func (db *KutoDB) Delete(holder interface{}) (int64, error) {
 	utils.ReflectSetValue(holder, "Deleted", int64(1))
 	return db.Update(holder, "deleted")
 }
