@@ -110,7 +110,7 @@ func (db *KutoDB) Delete(holder interface{}) (int64, error) {
 
 //Exec 执行sql语句
 func (db *KutoDB) Exec(sql string, args ...interface{}) error {
-	_, err := db.dbmap.Exec(sql, args)
+	_, err := db.dbmap.Exec(sql, args...)
 	return err
 }
 
@@ -187,6 +187,6 @@ func (tx *KutoTx) Delete(holder interface{}) (int64, error) {
 
 //Exec 执行sql语句
 func (tx *KutoTx) Exec(sql string, args ...interface{}) error {
-	_, err := tx.dbtx.Exec(sql, args)
+	_, err := tx.dbtx.Exec(sql, args...)
 	return err
 }
