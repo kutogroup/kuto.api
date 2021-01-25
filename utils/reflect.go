@@ -38,10 +38,10 @@ func ReflectSetValue(model interface{}, key string, value interface{}) {
 
 //CopyFields 复制结构体
 func CopyFields(dst interface{}, src interface{}, fields ...string) (err error) {
-	at := reflect.TypeOf(a)
-	av := reflect.ValueOf(a)
-	bt := reflect.TypeOf(b)
-	bv := reflect.ValueOf(b)
+	at := reflect.TypeOf(dst)
+	av := reflect.ValueOf(dst)
+	bt := reflect.TypeOf(src)
+	bv := reflect.ValueOf(src)
 
 	// 简单判断下
 	if at.Kind() != reflect.Ptr {
