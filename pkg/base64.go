@@ -36,15 +36,25 @@ func NewBase64(rand int) *KutoBase64 {
 
 //Encode base64加密
 func (c *KutoBase64) Encode(src string) string {
-	return c.Coder.EncodeToString([]byte(src))
+	return c.EncodeBytes([]byte(src))
+}
+
+//EncodeBytes base64加密
+func (c *KutoBase64) EncodeBytes(src []byte) string {
+	return c.Coder.EncodeToString(src)
 }
 
 //Decode base64解密
 func (c *KutoBase64) Decode(src string) (string, error) {
-	b, err := c.Coder.DecodeString(src)
+	b, err := c.DecodeToBytes(src)
 	if err != nil {
 		return "", err
 	}
 
 	return string(b), nil
+}
+
+//DecodeToBytes base64解密
+func (c *KutoBase64) DecodeToBytes(src string) ([]byte, error) {
+	return c.Coder.DecodeString(src)
 }
