@@ -57,6 +57,33 @@ func NewDatabase(table, addr, user, pwd string) *KutoDB {
 	return database
 }
 
+func NewDatabaseCustom(table, addr, user, pwd string, structTables []interface{}) *KutoDB {
+	sqlStr := fmt.Sprintf("%s:%s@tcp(%s)/%s?charset=utf8&parseTime=True&loc=%s", user, pwd, addr, table, timeZone)
+	fmt.Println("database conn string is", sqlStr)
+	db, err := sql.Open("mysql", sqlStr)
+	if err != nil {
+		log.Fatal(err)
+		return nil
+	}
+
+	database := &KutoDB{
+		dbmap: &gorp.DbMap{
+			Db: db,
+			Dialect: gorp.MySQLDialect{
+				Engine:   "InnoDB",
+				Encoding: "UTF8"},
+		},
+	}
+
+	database.dbmap.TraceOn("[gorp]", log.New(os.Stdout, "kk:", log.Lmicroseconds))
+	for _, v := range structTables {
+		database.dbmap.AddTableWithName(v, utils.StructGetLineName(v)).SetKeys(true, "ID")
+	}
+
+	return database
+
+}
+
 //SelectByID 根据ID查询
 func (db *KutoDB) SelectByID(holder interface{}, id int64) error {
 	return db.dbmap.SelectOne(holder,
