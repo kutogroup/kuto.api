@@ -4,6 +4,7 @@ import (
 	"io"
 	"path"
 	"runtime"
+	"time"
 
 	"github.com/sirupsen/logrus"
 )
@@ -43,6 +44,7 @@ func (logger *KutoLogger) I(msg string, args ...interface{}) {
 	logger.logger.WithFields(logrus.Fields{
 		"file": file,
 		"line": line,
+		"time": time.Now().Format("060102T1504"),
 	}).Infof(msg, args...)
 }
 
@@ -53,5 +55,6 @@ func (logger *KutoLogger) E(msg string, args ...interface{}) {
 	logger.logger.WithFields(logrus.Fields{
 		"file": file,
 		"line": line,
+		"time": time.Now().Format("060102T1504"),
 	}).Errorf(msg, args...)
 }
