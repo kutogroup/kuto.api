@@ -31,7 +31,7 @@ type KutoTx struct {
 }
 
 //NewDatabase 新建数据库对象
-func NewDatabase(table, addr, user, pwd string) *KutoDB {
+func NewDatabase(table, addr, user, pwd string, loggable bool) *KutoDB {
 	sqlStr := fmt.Sprintf("%s:%s@tcp(%s)/%s?charset=utf8&parseTime=True&loc=%s", user, pwd, addr, table, timeZone)
 	fmt.Println("database conn string is", sqlStr)
 	db, err := sql.Open("mysql", sqlStr)
@@ -49,7 +49,9 @@ func NewDatabase(table, addr, user, pwd string) *KutoDB {
 		},
 	}
 
-	database.dbmap.TraceOn("[gorp]", log.New(os.Stdout, "kk:", log.Lmicroseconds))
+	if loggable {
+		database.dbmap.TraceOn("[gorp]", log.New(os.Stdout, "kk:", log.Lmicroseconds))
+	}
 	for _, v := range models.ModelTables {
 		database.dbmap.AddTableWithName(v, utils.StructGetLineName(v)).SetKeys(true, "ID")
 	}
@@ -57,7 +59,7 @@ func NewDatabase(table, addr, user, pwd string) *KutoDB {
 	return database
 }
 
-func NewDatabaseCustom(table, addr, user, pwd string, structTables []interface{}) *KutoDB {
+func NewDatabaseCustom(table, addr, user, pwd string, loggable bool, structTables []interface{}) *KutoDB {
 	sqlStr := fmt.Sprintf("%s:%s@tcp(%s)/%s?charset=utf8&parseTime=True&loc=%s", user, pwd, addr, table, timeZone)
 	fmt.Println("database conn string is", sqlStr)
 	db, err := sql.Open("mysql", sqlStr)
@@ -75,7 +77,10 @@ func NewDatabaseCustom(table, addr, user, pwd string, structTables []interface{}
 		},
 	}
 
-	database.dbmap.TraceOn("[gorp]", log.New(os.Stdout, "kk:", log.Lmicroseconds))
+	if loggable {
+		database.dbmap.TraceOn("[gorp]", log.New(os.Stdout, "kk:", log.Lmicroseconds))
+	}
+
 	for _, v := range structTables {
 		database.dbmap.AddTableWithName(v, utils.StructGetLineName(v)).SetKeys(true, "ID")
 	}
