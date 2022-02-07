@@ -187,13 +187,19 @@ func (tx *KutoTx) Select(holder interface{}, where string, args ...interface{}) 
 		return errors.New("First params must be slice")
 	}
 
-	sql := "SELECT * FROM " + utils.ConvertCamel2Line(v.Elem().Name()) + " WHERE deleted=0"
+	sql := "SELECT * FROM " + utils.ConvertCamel2Line(v.Elem().Name()) + " WHERE "
 	if len(where) > 0 {
 		if where[0] >= 'A' && where[0] <= 'Z' {
-			//首字母大写表示不是where条件了
-			sql = sql + " " + where
+			//首字母大写表示没有where条件了
+			sql = sql + "deleted=0 " + where
 		} else {
-			sql = sql + " AND " + where
+			if !strings.Contains(where, "deleted") {
+				//如果不包含deleted，则默认选择未删除的
+				sql = sql + "deleted=0 AND " + where
+			} else {
+				//如果包含deleted，则直接追加
+				sql = sql + where
+			}
 		}
 	}
 
