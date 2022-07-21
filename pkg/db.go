@@ -154,12 +154,11 @@ func (db *KutoDB) Exec(sql string, args ...interface{}) error {
 }
 
 //Begin 开启事务
-func (db *KutoDB) Begin() *KutoTx {
+func (db *KutoDB) Begin() (*KutoTx, error) {
 	tx, err := db.dbmap.Begin()
-	fmt.Println(err)
 	return &KutoTx{
 		dbtx: tx,
-	}
+	}, err
 }
 
 //Commit 提交事务
