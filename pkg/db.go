@@ -172,7 +172,7 @@ func (tx *KutoTx) Rollback() error {
 }
 
 //SelectByID 根据ID查询
-func (tx *KutoTx) SelectByID(holder interface{}, id int) error {
+func (tx *KutoTx) SelectByID(holder interface{}, id int64) error {
 	return tx.dbtx.SelectOne(holder,
 		fmt.Sprintf("SELECT * FROM %s WHERE deleted=0 AND (%s)", utils.StructGetLineName(holder), "id=?"),
 		id)
