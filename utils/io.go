@@ -3,20 +3,11 @@ package utils
 import (
 	"context"
 	"io"
-	"net"
-	"time"
-
-	"github.com/kutogroup/kuto.api/pkg"
 )
 
-//300K，缓存
-var pool = pkg.NewKutoBytePool(300, 1024)
-
-func CopyWithContext(ctx context.Context, src, dst net.Conn, addTraffic func(int)) (int, error) {
+func CopyWithContext(ctx context.Context, dst io.WriteCloser, src io.ReadCloser, buf []byte, addTraffic func(int)) (int, error) {
 	defer dst.Close()
-
-	buf := pool.Get()
-	defer pool.Put(buf)
+	defer src.Close()
 
 	count := 0
 	for {
@@ -24,7 +15,6 @@ func CopyWithContext(ctx context.Context, src, dst net.Conn, addTraffic func(int
 			break
 		}
 
-		src.SetDeadline(time.Now().Add(20 * time.Second))
 		nr, er := src.Read(buf)
 		if er != nil {
 			if er == io.EOF {
@@ -35,7 +25,6 @@ func CopyWithContext(ctx context.Context, src, dst net.Conn, addTraffic func(int
 		}
 
 		if nr > 0 {
-			dst.SetDeadline(time.Now().Add(20 * time.Second))
 			nw, ew := dst.Write(buf[0:nr])
 			if ew != nil {
 				return 0, ew
