@@ -8,7 +8,7 @@ type KutoBytePool struct {
 
 // NewKutoBytePool creates a new KutoBytePool bounded to the given maxSize, with new
 // byte arrays sized based on width.
-func NewKutoBytePool(maxSize int, width int) (bp *KutoBytePool) {
+func NewBytePool(maxSize int, width int) (bp *KutoBytePool) {
 	return &KutoBytePool{
 		c: make(chan []byte, maxSize),
 		w: width,
