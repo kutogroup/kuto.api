@@ -10,7 +10,7 @@ import (
 )
 
 //300K，缓存
-var pool = pkg.NewBytePool(300, 1024)
+var pool = pkg.NewKutoBytePool(300, 1024)
 
 func CopyWithContext(ctx context.Context, src, dst net.Conn, addTraffic func(int)) (int, error) {
 	defer dst.Close()
