@@ -1,23 +1,23 @@
 package pkg
 
-//BytePool Byte池
-type BytePool struct {
+//KutoBytePool Byte池
+type KutoBytePool struct {
 	c chan []byte
 	w int
 }
 
-// NewBytePool creates a new BytePool bounded to the given maxSize, with new
+// NewKutoBytePool creates a new KutoBytePool bounded to the given maxSize, with new
 // byte arrays sized based on width.
-func NewBytePool(maxSize int, width int) (bp *BytePool) {
-	return &BytePool{
+func NewKutoBytePool(maxSize int, width int) (bp *KutoBytePool) {
+	return &KutoBytePool{
 		c: make(chan []byte, maxSize),
 		w: width,
 	}
 }
 
-// Get gets a []byte from the BytePool, or creates a new one if none are
+// Get gets a []byte from the KutoBytePool, or creates a new one if none are
 // available in the pool.
-func (bp *BytePool) Get() (b []byte) {
+func (bp *KutoBytePool) Get() (b []byte) {
 	select {
 	case b = <-bp.c:
 	// reuse existing buffer
@@ -28,8 +28,8 @@ func (bp *BytePool) Get() (b []byte) {
 	return
 }
 
-// Put returns the given Buffer to the BytePool.
-func (bp *BytePool) Put(b []byte) {
+// Put returns the given Buffer to the KutoBytePool.
+func (bp *KutoBytePool) Put(b []byte) {
 	if cap(b) < bp.w {
 		// someone tried to put back a too small buffer, discard it
 		return
@@ -44,6 +44,6 @@ func (bp *BytePool) Put(b []byte) {
 }
 
 // Width returns the width of the byte arrays in this pool.
-func (bp *BytePool) Width() (n int) {
+func (bp *KutoBytePool) Width() (n int) {
 	return bp.w
 }
