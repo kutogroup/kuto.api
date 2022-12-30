@@ -104,7 +104,15 @@ func (db *KutoDB) Select(holder interface{}, where string, args ...interface{}) 
 		return errors.New("First params must be slice")
 	}
 
-	sql := "SELECT * FROM " + utils.ConvertCamel2Line(v.Elem().Name()) + " WHERE "
+	s := v.Elem()
+	res := ""
+	for n := 0; n < s.NumField(); n++ {
+		res = res + s.Field(n).Tag.Get("db") + ","
+	}
+
+	res = strings.TrimRight(res, ",")
+
+	sql := "SELECT " + res + " FROM " + utils.ConvertCamel2Line(s.Name()) + " WHERE "
 	if len(where) > 0 {
 		if where[0] >= 'A' && where[0] <= 'Z' {
 			//首字母大写表示没有where条件了
@@ -186,7 +194,15 @@ func (tx *KutoTx) Select(holder interface{}, where string, args ...interface{}) 
 		return errors.New("First params must be slice")
 	}
 
-	sql := "SELECT * FROM " + utils.ConvertCamel2Line(v.Elem().Name()) + " WHERE "
+	s := v.Elem()
+	res := ""
+	for n := 0; n < s.NumField(); n++ {
+		res = res + s.Field(n).Tag.Get("db") + ","
+	}
+
+	res = strings.TrimRight(res, ",")
+
+	sql := "SELECT " + res + " FROM " + utils.ConvertCamel2Line(s.Name()) + " WHERE "
 	if len(where) > 0 {
 		if where[0] >= 'A' && where[0] <= 'Z' {
 			//首字母大写表示没有where条件了
