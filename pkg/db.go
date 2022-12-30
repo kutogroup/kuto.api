@@ -93,7 +93,7 @@ func (db *KutoDB) SelectByID(holder interface{}, id int64) error {
 	v, _ := utils.ReflectGetVT(holder)
 	res := ""
 	for n := 0; n < v.NumField(); n++ {
-		res = res + v.Field(n).Tag.Get("db") + ","
+		res = res + "`" + v.Field(n).Tag.Get("db") + "`,"
 	}
 
 	res = strings.TrimRight(res, ",")
@@ -113,7 +113,7 @@ func (db *KutoDB) Select(holder interface{}, where string, args ...interface{}) 
 	s := v.Elem()
 	res := ""
 	for n := 0; n < s.NumField(); n++ {
-		res = res + s.Field(n).Tag.Get("db") + ","
+		res = res + "`" + s.Field(n).Tag.Get("db") + "`,"
 	}
 
 	res = strings.TrimRight(res, ",")
@@ -182,7 +182,7 @@ func (tx *KutoTx) SelectByID(holder interface{}, id int64) error {
 	v, _ := utils.ReflectGetVT(holder)
 	res := ""
 	for n := 0; n < v.NumField(); n++ {
-		res = res + v.Field(n).Tag.Get("db") + ","
+		res = res + "`" + v.Field(n).Tag.Get("db") + "`,"
 	}
 
 	res = strings.TrimRight(res, ",")
@@ -203,7 +203,7 @@ func (tx *KutoTx) Select(holder interface{}, where string, args ...interface{}) 
 	s := v.Elem()
 	res := ""
 	for n := 0; n < s.NumField(); n++ {
-		res = res + s.Field(n).Tag.Get("db") + ","
+		res = res + "`" + s.Field(n).Tag.Get("db") + "`,"
 	}
 
 	res = strings.TrimRight(res, ",")

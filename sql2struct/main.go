@@ -12,6 +12,10 @@ import (
 	_ "github.com/go-sql-driver/mysql"
 )
 
+var IGNORE_COLUMN = []string{
+	"create_at", "update_at", "deleted",
+}
+
 //用户名，密码，服务器地址，表名，目录地址
 var user, pwd, host, table, dest string
 
@@ -81,6 +85,10 @@ func main() {
 			" = \"" +
 			table + "\"\n"
 		for _, column := range columns {
+			if isIgnoreColumn(column) {
+				continue
+			}
+
 			fn := utils.ConvertLine2Camel(column.Field.String)
 			structString = structString + getSpace(4) + "Column" +
 				structName + fn +
@@ -95,6 +103,10 @@ func main() {
 
 		var maxFieldLineLength, maxFieldLength, maxTypeLength int
 		for _, column := range columns {
+			if isIgnoreColumn(column) {
+				continue
+			}
+
 			field := utils.ConvertLine2Camel(column.Field.String)
 			if len(field) > maxFieldLength {
 				maxFieldLength = len(field)
@@ -110,6 +122,10 @@ func main() {
 		}
 
 		for _, column := range columns {
+			if isIgnoreColumn(column) {
+				continue
+			}
+
 			var field string
 
 			if column.Key.String == "PRI" {
@@ -137,6 +153,16 @@ func main() {
 
 		utils.FileWriteString(dest+"/models/"+table+".go", structString)
 	}
+}
+
+func isIgnoreColumn(col tableColumnsAttr) bool {
+	for n := 0; n < len(IGNORE_COLUMN); n++ {
+		if IGNORE_COLUMN[n] == col.Field.String {
+			return true
+		}
+	}
+
+	return false
 }
 
 func getTable(db *sql.DB) ([]string, error) {
