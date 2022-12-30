@@ -9,7 +9,6 @@ import (
 	"os"
 	"reflect"
 	"strings"
-	"time"
 
 	"github.com/kutogroup/kuto.api/models"
 	"github.com/kutogroup/kuto.api/utils"
@@ -91,8 +90,15 @@ func NewDatabaseCustom(table, addr, user, pwd string, loggable bool, structTable
 
 //SelectByID 根据ID查询
 func (db *KutoDB) SelectByID(holder interface{}, id int64) error {
+	v, _ := utils.ReflectGetVT(holder)
+	res := ""
+	for n := 0; n < v.NumField(); n++ {
+		res = res + v.Field(n).Tag.Get("db") + ","
+	}
+
+	res = strings.TrimRight(res, ",")
 	return db.dbmap.SelectOne(holder,
-		fmt.Sprintf("SELECT * FROM %s WHERE deleted=0 AND (%s)", utils.StructGetLineName(holder), "id=?"),
+		fmt.Sprintf("SELECT "+res+" FROM %s WHERE deleted=0 AND (%s)", utils.StructGetLineName(holder), "id=?"),
 		id)
 }
 
@@ -111,7 +117,6 @@ func (db *KutoDB) Select(holder interface{}, where string, args ...interface{}) 
 	}
 
 	res = strings.TrimRight(res, ",")
-
 	sql := "SELECT " + res + " FROM " + utils.ConvertCamel2Line(s.Name()) + " WHERE "
 	if len(where) > 0 {
 		if where[0] >= 'A' && where[0] <= 'Z' {
@@ -134,13 +139,6 @@ func (db *KutoDB) Select(holder interface{}, where string, args ...interface{}) 
 
 //Insert 插入数据库
 func (db *KutoDB) Insert(holder ...interface{}) error {
-	for _, v := range holder {
-		t := &models.Time{}
-		t.Scan(time.Now())
-		utils.ReflectSetValue(v, "CreateAt", *t)
-		utils.ReflectSetValue(v, "UpdateAt", *t)
-	}
-
 	return db.dbmap.Insert(holder...)
 }
 
@@ -181,8 +179,16 @@ func (tx *KutoTx) Rollback() error {
 
 //SelectByID 根据ID查询
 func (tx *KutoTx) SelectByID(holder interface{}, id int64) error {
+	v, _ := utils.ReflectGetVT(holder)
+	res := ""
+	for n := 0; n < v.NumField(); n++ {
+		res = res + v.Field(n).Tag.Get("db") + ","
+	}
+
+	res = strings.TrimRight(res, ",")
+
 	return tx.dbtx.SelectOne(holder,
-		fmt.Sprintf("SELECT * FROM %s WHERE deleted=0 AND (%s)", utils.StructGetLineName(holder), "id=?"),
+		fmt.Sprintf("SELECT "+res+" FROM %s WHERE deleted=0 AND (%s)", utils.StructGetLineName(holder), "id=?"),
 		id)
 }
 
@@ -224,13 +230,6 @@ func (tx *KutoTx) Select(holder interface{}, where string, args ...interface{}) 
 
 //Insert 插入数据库
 func (tx *KutoTx) Insert(holder ...interface{}) error {
-	for _, v := range holder {
-		t := &models.Time{}
-		t.Scan(time.Now())
-		utils.ReflectSetValue(v, "CreateAt", *t)
-		utils.ReflectSetValue(v, "UpdateAt", *t)
-	}
-
 	return tx.dbtx.Insert(holder...)
 }
 
