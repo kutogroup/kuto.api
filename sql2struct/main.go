@@ -214,7 +214,7 @@ func getColumns(db *sql.DB, tableName string) (columns []tableColumnsAttr) {
 func getType(field tableColumnsAttr) string {
 	kv := strings.SplitN(field.Type.String, "(", 2)
 	switch kv[0] {
-	case "int", "tinyint":
+	case "int", "tinyint", "bigint":
 		return "int64"
 	case "datetime", "timestamp":
 		return "m.Time"
