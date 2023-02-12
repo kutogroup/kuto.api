@@ -89,7 +89,7 @@ func NewDatabaseCustom(table, addr, user, pwd string, loggable bool, structTable
 }
 
 func (db *KutoDB) SelectCount(where string, args ...interface{}) (int64, error) {
-	return db.dbmap.SelectInt(where, args)
+	return db.dbmap.SelectInt(where, args...)
 }
 
 //SelectByID 根据ID查询
@@ -182,7 +182,7 @@ func (tx *KutoTx) Rollback() error {
 }
 
 func (tx *KutoTx) SelectCount(where string, args ...interface{}) (int64, error) {
-	return tx.dbtx.SelectInt(where, args)
+	return tx.dbtx.SelectInt(where, args...)
 }
 
 //SelectByID 根据ID查询
